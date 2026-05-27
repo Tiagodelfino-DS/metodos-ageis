@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Metodologias Ágeis</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+    }
+
+    #tela-modulos { display: block; }
+    #tela-aula    { display: none; }
+
+    header {
+      background: #6c3fc5;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.8rem; margin-bottom: 6px; }
+    header p  { font-size: 0.95rem; opacity: 0.9; }
+
+    .grade {
+      max-width: 860px;
+      margin: 30px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); }
+    .card .icone { font-size: 2rem; margin-bottom: 10px; }
+    .card h2 { font-size: 0.95rem; color: #6c3fc5; margin-bottom: 6px; }
+    .card p  { font-size: 0.82rem; color: #666; }
+
+    .aula-header {
+      background: #6c3fc5;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-voltar {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn-voltar:hover { background: rgba(255,255,255,0.35); }
+
+    .aula-conteudo {
+      max-width: 760px;
+      margin: 30px auto;
+      padding: 0 16px;
+    }
+
+    .bloco {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      line-height: 1.7;
+    }
+    .bloco h3 {
+      color: #6c3fc5;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+    }
+    .bloco p { margin-bottom: 10px; font-size: 0.95rem; }
+    .bloco ul { padding-left: 20px; font-size: 0.95rem; }
+    .bloco ul li { margin-bottom: 6px; }
+
+    .destaque {
+      background: #f0eaff;
+      border-left: 4px solid #6c3fc5;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 14px 0;
+      font-size: 0.92rem;
+    }
+
+    .quiz-pergunta {
+      font-weight: bold;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    .quiz-opcoes button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: #f0f4f8;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .quiz-opcoes button:hover { background: #e8daff; }
+    .quiz-opcoes button.certa  { background: #d4edda; border-color: #28a745; }
+    .quiz-opcoes button.errada { background: #f8d7da; border-color: #dc3545; }
+    .quiz-feedback {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      font-weight: bold;
+    }
+
+    .nav-aulas {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0 40px;
+    }
+    .btn-nav {
+      background: #6c3fc5;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn-nav:disabled { background: #ccc; cursor: default; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<div id="tela-modulos">
+  <header>
+    <h1>⚡ Metodologias Ágeis</h1>
+    <p>Processos de Desenvolvimento de Software — Ensino Médio</p>
+  </header>
+  <div class="grade" id="grade-cards"></div>
+  <footer>Curso de Metodologias Ágeis — Ensino Médio</footer>
+</div>
+
+<div id="tela-aula">
+  <div class="aula-header">
+    <button class="btn-voltar" onclick="voltarMenu()">← Voltar</button>
+    <span id="titulo-aula" style="font-size:1rem; font-weight:bold;"></span>
+  </div>
+  <div class="aula-conteudo" id="aula-conteudo"></div>
+</div>
+
+<script>
+  const aulas = [
+    {
+      icone: "📜",
+      titulo: "Aula 1 — História das Metodologias Ágeis",
+      resumo: "Como surgiu o jeito ágil de trabalhar.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Como tudo começou</h3>
+          <p>Antes das metodologias ágeis, os projetos de software seguiam um modelo chamado <strong>Cascata (Waterfall)</strong>: cada etapa precisava ser totalmente concluída antes de passar para a próxima. Planejamento, desenvolvimento, testes e entrega eram fases separadas e rígidas.</p>
+          <p>O problema é que esse modelo era muito lento e pouco flexível. Se o cliente mudasse de ideia no meio do projeto, quase tudo tinha que ser refeito.</p>
+          <div class="destaque">💡 Imagine construir uma casa inteira e só mostrar para o dono quando estiver pronta — e ele odeia o resultado.</div>
+        </div>
+        <div class="bloco">
+          <h3>O Manifesto Ágil (2001)</h3>
+          <p>Em fevereiro de 2001, um grupo de 17 desenvolvedores se reuniu em Utah, nos EUA, e criou o <strong>Manifesto Ágil</strong> — um documento com valores e princípios para tornar o desenvolvimento de software mais eficiente e humano.</p>
+          <p>A ideia central era: entregar software funcionando com frequência, colaborar com o cliente e responder bem às mudanças.</p>
+          <div class="destaque">📄 O Manifesto Ágil pode ser lido em: agilemanifesto.org</div>
+        </div>
+        <div class="bloco">
+          <h3>Por que isso mudou tudo?</h3>
+          <p>A partir do Manifesto, surgiram várias metodologias baseadas nesses princípios, como Scrum, Kanban e Lean. Hoje essas metodologias são usadas não só em tecnologia, mas em empresas de todos os setores.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Em que ano foi criado o Manifesto Ágil?",
+        opcoes: ["1995", "2001", "2008", "2015"],
+        certa: 1,
+        explicacao: "O Manifesto Ágil foi criado em fevereiro de 2001 por 17 desenvolvedores reunidos nos EUA."
+      }
+    },
+    {
+      icone: "🎯",
+      titulo: "Aula 2 — Por que aprender Metodologias Ágeis?",
+      resumo: "A importância no mercado de trabalho atual.",
+      conteudo: `
+        <div class="bloco">
+          <h3>O mundo mudou — e o trabalho também</h3>
+          <p>O mercado de trabalho atual exige profissionais que saibam trabalhar em equipe, se adaptar rápido às mudanças e entregar resultados com frequência. É exatamente isso que as metodologias ágeis ensinam.</p>
+          <div class="destaque">📊 Segundo pesquisas, mais de 70% das empresas de tecnologia usam alguma metodologia ágil nos seus projetos.</div>
+        </div>
+        <div class="bloco">
+          <h3>Um passo à frente no mercado</h3>
+          <p>Conhecer metodologias ágeis coloca você à frente de outros candidatos em processos seletivos. Empresas como Google, Amazon, Nubank, iFood e Itaú usam Scrum e Kanban no dia a dia.</p>
+          <p>Mesmo que você não vá trabalhar com tecnologia, saber organizar tarefas, priorizar entregas e trabalhar em sprints é valioso em qualquer área: marketing, recursos humanos, educação e até no empreendedorismo.</p>
+        </div>
+        <div class="bloco">
+          <h3>O que você vai ganhar aprendendo isso?</h3>
+          <ul>
+            <li>Capacidade de organizar projetos de forma eficiente.</li>
+            <li>Habilidade de trabalhar bem em equipe.</li>
+            <li>Diferencial competitivo no mercado de trabalho.</li>
+            <li>Base para entender como empresas modernas funcionam.</li>
+          </ul>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Além da tecnologia, em quais outras áreas as metodologias ágeis podem ser aplicadas?",
+        opcoes: [
+          "Apenas em empresas de software",
+          "Somente em startups",
+          "Em qualquer área, como marketing, educação e empreendedorismo",
+          "Apenas em grandes corporações"
+        ],
+        certa: 2,
+        explicacao: "As metodologias ágeis podem ser aplicadas em qualquer área que envolva projetos e trabalho em equipe, não só em tecnologia."
+      }
+    },
+    {
+      icone: "⚡",
+      titulo: "Aula 3 — O que é Agilidade?",
+      resumo: "Entendendo o conceito de agilidade de verdade.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Agilidade não é só velocidade</h3>
+          <p>Muita gente confunde agilidade com fazer as coisas rápido. Mas agilidade de verdade significa <strong>responder bem às mudanças</strong>, entregar valor com frequência e aprender com cada entrega.</p>
+          <div class="destaque">🚀 Ser ágil é como um barco a remo: você pode mudar de direção a qualquer momento. Um navio de carga é mais rápido, mas leva quilômetros para virar.</div>
+        </div>
+        <div class="bloco">
+          <h3>Os pilares da agilidade</h3>
+          <ul>
+            <li><strong>Transparência:</strong> todos sabem o que está acontecendo no projeto.</li>
+            <li><strong>Inspeção:</strong> o time revisa o trabalho com frequência para encontrar problemas cedo.</li>
+            <li><strong>Adaptação:</strong> quando algo não funciona, o time muda a abordagem rapidamente.</li>
+          </ul>
+        </div>
+        <div class="bloco">
+          <h3>Por que isso importa na administração?</h3>
+          <p>Em uma empresa, decisões lentas custam dinheiro. Um time ágil consegue perceber quando uma estratégia não está funcionando e mudar de rumo antes de desperdiçar recursos. Isso vale para uma grande empresa ou para um pequeno negócio.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "O que significa ser ágil em um projeto?",
+        opcoes: [
+          "Trabalhar o mais rápido possível sem parar",
+          "Responder bem às mudanças e entregar valor com frequência",
+          "Fazer tudo sem planejamento",
+          "Reduzir o número de pessoas na equipe"
+        ],
+        certa: 1,
+        explicacao: "Agilidade é sobre responder bem às mudanças e entregar valor continuamente, não apenas sobre velocidade."
+      }
+    },
+    {
+      icone: "🔄",
+      titulo: "Aula 4 — Ágil x Tradicional",
+      resumo: "Diferenças entre o pensamento ágil e o planejamento tradicional.",
+      conteudo: `
+        <div class="bloco">
+          <h3>O modelo tradicional (Cascata)</h3>
+          <p>No modelo tradicional, o projeto segue etapas fixas em sequência: levantamento de requisitos, design, desenvolvimento, testes e entrega. Só se avança quando a etapa anterior está 100% concluída.</p>
+          <div class="destaque">📅 Problema: o cliente só vê o resultado no final, quando mudanças são caras e difíceis.</div>
+        </div>
+        <div class="bloco">
+          <h3>O modelo ágil</h3>
+          <p>No modelo ágil, o projeto é dividido em ciclos curtos chamados <strong>sprints</strong> (geralmente de 1 a 4 semanas). A cada sprint, uma parte funcional do produto é entregue e avaliada pelo cliente.</p>
+          <div class="destaque">✅ Vantagem: o cliente vê resultados desde cedo e pode pedir ajustes antes que o erro se torne grande.</div>
+        </div>
+        <div class="bloco">
+          <h3>Comparando os dois</h3>
+          <ul>
+            <li><strong>Tradicional:</strong> planejamento completo no início, pouca flexibilidade, entrega única no final.</li>
+            <li><strong>Ágil:</strong> planejamento contínuo, alta flexibilidade, entregas frequentes.</li>
+          </ul>
+          <p>Nenhum modelo é sempre melhor — depende do projeto. Construir uma ponte exige o modelo tradicional. Desenvolver um aplicativo se beneficia muito do modelo ágil.</p>
+        </div>
+        <div class="bloco">
+          <h3>Pensar com mentalidade ágil</h3>
+          <p>Ter mentalidade ágil é aceitar que mudanças fazem parte do processo, valorizar o aprendizado contínuo e focar em entregar valor real para o cliente, não apenas cumprir um plano.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "O que são sprints no modelo ágil?",
+        opcoes: [
+          "Reuniões diárias da equipe",
+          "Ciclos curtos de trabalho com entrega ao final",
+          "Documentos de planejamento do projeto",
+          "Avaliações de desempenho da equipe"
+        ],
+        certa: 1,
+        explicacao: "Sprints são ciclos curtos de trabalho (geralmente 1 a 4 semanas) onde uma parte funcional do produto é desenvolvida e entregue."
+      }
+    },
+    {
+      icone: "📋",
+      titulo: "Aula 5 — Planejamento, Organização e Execução",
+      resumo: "Como organizar e executar tarefas com mentalidade ágil.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Planejamento ágil</h3>
+          <p>No modelo ágil, o planejamento não acontece uma única vez no início. Ele é contínuo e se adapta conforme o projeto avança. A equipe planeja o que vai fazer no próximo ciclo (sprint) com base nas prioridades mais importantes.</p>
+        </div>
+        <div class="bloco">
+          <h3>Organização de tarefas</h3>
+          <p>As tarefas são listadas em um <strong>backlog</strong> — uma lista priorizada de tudo que precisa ser feito. As mais importantes entram primeiro nos sprints.</p>
+          <div class="destaque">📝 Pense no backlog como uma lista de compras organizada por prioridade: você compra primeiro o que é essencial.</div>
+        </div>
+        <div class="bloco">
+          <h3>Exemplo real: loja de roupas no bairro</h3>
+          <p>Imagine que você quer modernizar uma loja de roupas. Pelo modelo tradicional, você fecharia a loja por meses, reformaria tudo e reabriria. Pelo modelo ágil, você faria pequenas mudanças a cada semana: primeiro organiza o estoque, depois melhora a vitrine, depois cria um Instagram, e vai ajustando conforme vê o que funciona.</p>
+          <div class="destaque">🏪 Resultado ágil: a loja não para, o dono aprende com os clientes e cada mudança melhora o negócio.</div>
+        </div>
+        <div class="bloco">
+          <h3>Controle e execução</h3>
+          <p>Durante a execução, a equipe usa reuniões rápidas (como a Daily Scrum de 15 minutos) para sincronizar o que cada um está fazendo, identificar obstáculos e garantir que o time está caminhando na direção certa.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "O que é o backlog em um projeto ágil?",
+        opcoes: [
+          "Um relatório de erros encontrados no sistema",
+          "Uma lista priorizada de tudo que precisa ser feito no projeto",
+          "O nome do software usado pela equipe",
+          "Uma reunião semanal da equipe"
+        ],
+        certa: 1,
+        explicacao: "O backlog é uma lista priorizada de tarefas e funcionalidades que precisam ser desenvolvidas no projeto."
+      }
+    },
+    {
+      icone: "💎",
+      titulo: "Aula 6 — Os 4 Valores Ágeis",
+      resumo: "Os valores fundamentais do Manifesto Ágil.",
+      conteudo: `
+        <div class="bloco">
+          <h3>O que são os valores ágeis?</h3>
+          <p>O Manifesto Ágil define 4 valores fundamentais. Cada valor compara duas coisas e diz que, embora ambas tenham importância, uma deve ter mais peso nas decisões do time.</p>
+        </div>
+        <div class="bloco">
+          <h3>Valor 1 — Indivíduos e interações acima de processos e ferramentas</h3>
+          <p>Ferramentas e processos são importantes, mas pessoas que se comunicam bem e colaboram entre si fazem a diferença real. Um time unido resolve problemas que nenhuma ferramenta consegue.</p>
+        </div>
+        <div class="bloco">
+          <h3>Valor 2 — Software funcionando acima de documentação abrangente</h3>
+          <p>Documentação é necessária, mas o objetivo final é entregar algo que funcione. Um produto real nas mãos do cliente vale mais que pilhas de documentos.</p>
+        </div>
+        <div class="bloco">
+          <h3>Valor 3 — Colaboração com o cliente acima de negociação de contratos</h3>
+          <p>Trabalhar junto com o cliente durante todo o projeto é melhor do que apenas seguir o que foi acordado em contrato. O cliente precisa participar, dar feedback e co-criar a solução.</p>
+        </div>
+        <div class="bloco">
+          <h3>Valor 4 — Responder a mudanças acima de seguir um plano</h3>
+          <p>Planos são importantes, mas a realidade muda. Uma equipe ágil sabe quando é hora de ajustar o rumo em vez de continuar seguindo um plano que não funciona mais.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Qual dos 4 valores ágeis fala sobre dar mais importância às pessoas do que às ferramentas?",
+        opcoes: [
+          "Software funcionando acima de documentação",
+          "Responder a mudanças acima de seguir um plano",
+          "Indivíduos e interações acima de processos e ferramentas",
+          "Colaboração com o cliente acima de contratos"
+        ],
+        certa: 2,
+        explicacao: "O primeiro valor do Manifesto Ágil diz que indivíduos e interações valem mais do que processos e ferramentas."
+      }
+    },
+    {
+      icone: "📌",
+      titulo: "Aula 7 — Os 12 Princípios Ágeis",
+      resumo: "Os princípios que guiam as equipes ágeis.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Para que servem os princípios?</h3>
+          <p>Se os 4 valores são a filosofia do Manifesto Ágil, os 12 princípios são o guia prático de como aplicar essa filosofia no dia a dia de um projeto.</p>
+        </div>
+        <div class="bloco">
+          <h3>Os 12 Princípios</h3>
+          <ul>
+            <li>Satisfazer o cliente com entregas contínuas e rápidas de valor.</li>
+            <li>Aceitar mudanças mesmo no final do projeto.</li>
+            <li>Entregar software funcionando com frequência (semanas, não meses).</li>
+            <li>Clientes e desenvolvedores devem trabalhar juntos diariamente.</li>
+            <li>Construir projetos com pessoas motivadas e dar a elas o suporte necessário.</li>
+            <li>A melhor comunicação é cara a cara (ou por vídeo).</li>
+            <li>Software funcionando é a principal medida de progresso.</li>
+            <li>Manter um ritmo constante e sustentável de trabalho.</li>
+            <li>Excelência técnica e bom design aumentam a agilidade.</li>
+            <li>Simplicidade — fazer só o necessário — é essencial.</li>
+            <li>As melhores ideias surgem de times que se auto-organizam.</li>
+            <li>O time reflete regularmente sobre como melhorar e age sobre isso.</li>
+          </ul>
+        </div>
+        <div class="bloco">
+          <h3>O princípio mais importante</h3>
+          <p>Muitos especialistas destacam o princípio da <strong>melhoria contínua</strong>: ao final de cada sprint, o time para e pergunta "o que podemos fazer melhor?" — e realmente muda. Isso é o que diferencia times ágeis dos tradicionais.</p>
+          <div class="destaque">🔁 Essa prática de reflexão e melhoria se chama Retrospectiva.</div>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Qual é a principal medida de progresso em um projeto ágil?",
+        opcoes: [
+          "A quantidade de documentos produzidos",
+          "O número de reuniões realizadas",
+          "Software funcionando",
+          "O tamanho da equipe"
+        ],
+        certa: 2,
+        explicacao: "Segundo os princípios ágeis, software funcionando é a principal medida de progresso — não documentos ou reuniões."
+      }
+    },
+    {
+      icone: "🏃",
+      titulo: "Aula 8 — Scrum",
+      resumo: "Papéis, eventos e como o Scrum funciona na prática.",
+      conteudo: `
+        <div class="bloco">
+          <h3>O que é Scrum?</h3>
+          <p>Scrum é o framework ágil mais usado no mundo. Ele organiza o trabalho em ciclos chamados sprints e define papéis claros para cada membro da equipe.</p>
+          <div class="destaque">🏉 O nome vem do rugby: no Scrum do rugby, todos do time se unem para avançar juntos.</div>
+        </div>
+        <div class="bloco">
+          <h3>Os 3 Papéis do Scrum</h3>
+          <ul>
+            <li><strong>Product Owner (PO):</strong> representa o cliente. Define o que deve ser feito e prioriza o backlog. É o "dono do produto".</li>
+            <li><strong>Scrum Master:</strong> garante que o time está seguindo as regras do Scrum, remove obstáculos e facilita as cerimônias. Não é o chefe — é um facilitador.</li>
+            <li><strong>Time de Desenvolvimento:</strong> equipe que de fato desenvolve o produto. São auto-organizados e multifuncionais.</li>
+          </ul>
+        </div>
+        <div class="bloco">
+          <h3>Os 5 Eventos do Scrum</h3>
+          <ul>
+            <li><strong>Sprint:</strong> ciclo de trabalho de 1 a 4 semanas.</li>
+            <li><strong>Sprint Planning:</strong> reunião para planejar o que será feito na sprint.</li>
+            <li><strong>Daily Scrum:</strong> reunião diária de 15 minutos para sincronizar a equipe.</li>
+            <li><strong>Sprint Review:</strong> apresentação do que foi feito ao cliente ao final da sprint.</li>
+            <li><strong>Sprint Retrospective:</strong> reflexão do time sobre o que melhorar na próxima sprint.</li>
+          </ul>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Qual é o papel do Scrum Master?",
+        opcoes: [
+          "Ser o chefe da equipe e dar ordens",
+          "Desenvolver todas as funcionalidades do produto",
+          "Facilitar o processo, remover obstáculos e garantir que o Scrum seja aplicado corretamente",
+          "Representar o cliente e priorizar o backlog"
+        ],
+        certa: 2,
+        explicacao: "O Scrum Master é um facilitador, não um chefe. Ele remove impedimentos e garante que o time siga os princípios do Scrum."
+      }
+    },
+    {
+      icone: "📊",
+      titulo: "Aula 9 — Backlog e Quadros de Tarefas",
+      resumo: "Como organizar e priorizar o trabalho no Scrum.",
+      conteudo: `
+        <div class="bloco">
+          <h3>O que é o Backlog do Produto?</h3>
+          <p>O Backlog do Produto é uma lista ordenada de tudo que precisa ser feito para o produto ficar pronto. É mantido e priorizado pelo Product Owner. Os itens mais importantes ficam no topo e entram primeiro nas sprints.</p>
+          <div class="destaque">📝 Pense no backlog como uma fila de supermercado organizada por urgência: quem tem menos itens e mais prioridade passa na frente.</div>
+        </div>
+        <div class="bloco">
+          <h3>Os Riscos da Falta de Priorização</h3>
+          <p>Quando ninguém decide o que é mais importante, a equipe pode perder tempo desenvolvendo funcionalidades que o cliente nem vai usar. Priorizar mal é um dos maiores motivos de fracasso em projetos.</p>
+          <div class="destaque">⚠️ Fazer tudo ao mesmo tempo é o mesmo que não fazer nada direito.</div>
+        </div>
+        <div class="bloco">
+          <h3>Quadro de Tarefas (Task Board)</h3>
+          <p>O quadro de tarefas é uma ferramenta visual que mostra o estado de cada tarefa da sprint. Ele tem colunas como <strong>A Fazer</strong>, <strong>Em Andamento</strong> e <strong>Concluído</strong>.</p>
+          <p>À medida que o time trabalha, as tarefas vão avançando pelas colunas. Qualquer um pode ver em tempo real o que está acontecendo no projeto.</p>
+        </div>
+        <div class="bloco">
+          <h3>Como o Backlog e o Quadro funcionam juntos</h3>
+          <p>No início de cada sprint, o time pega os itens mais prioritários do backlog e os coloca na coluna "A Fazer" do quadro. Durante a sprint, as tarefas avançam até "Concluído". No final, os itens prontos são entregues ao cliente.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Quem é responsável por priorizar o Backlog do Produto?",
+        opcoes: ["Scrum Master", "Time de Desenvolvimento", "Product Owner", "O cliente diretamente"],
+        certa: 2,
+        explicacao: "O Product Owner é responsável por manter e priorizar o backlog, decidindo quais itens têm mais valor para o cliente."
+      }
+    },
+    {
+      icone: "🎯",
+      titulo: "Aula 10 — Aprendendo a Priorizar",
+      resumo: "Como decidir o que deve ser feito primeiro.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Por que priorizar é tão difícil?</h3>
+          <p>Em um projeto, sempre há mais coisas para fazer do que tempo disponível. Priorizar significa tomar decisões difíceis sobre o que fica de fora — pelo menos por agora.</p>
+        </div>
+        <div class="bloco">
+          <h3>Critérios para priorizar</h3>
+          <ul>
+            <li><strong>Valor para o cliente:</strong> o que gera mais resultado para quem vai usar o produto?</li>
+            <li><strong>Urgência:</strong> o que precisa ser entregue mais rápido?</li>
+            <li><strong>Risco:</strong> o que pode travar o projeto se não for feito antes?</li>
+            <li><strong>Dependência:</strong> alguma tarefa depende de outra para começar?</li>
+          </ul>
+        </div>
+        <div class="bloco">
+          <h3>Técnica: MoSCoW</h3>
+          <p>Uma técnica simples de priorização é o MoSCoW, que classifica as tarefas em 4 grupos: <strong>Must have</strong> (deve ter), <strong>Should have</strong> (deveria ter), <strong>Could have</strong> (poderia ter) e <strong>Won't have</strong> (não terá agora).</p>
+          <div class="destaque">🎯 Foque nos "Must have" primeiro. Os "Could have" ficam para depois — se houver tempo.</div>
+        </div>
+        <div class="bloco">
+          <h3>A importância de dizer não</h3>
+          <p>Um bom Product Owner sabe dizer não para funcionalidades que não agregam valor agora. Adicionar coisas desnecessárias ao projeto aumenta a complexidade e atrasa a entrega do que realmente importa.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Na técnica MoSCoW, o que significa 'Must have'?",
+        opcoes: [
+          "Algo que seria legal ter, mas não é essencial",
+          "Algo que definitivamente não será feito agora",
+          "Algo que deve obrigatoriamente estar no produto",
+          "Algo que depende da opinião do cliente"
+        ],
+        certa: 2,
+        explicacao: "Must have são os requisitos obrigatórios, sem os quais o produto não funciona ou não atende ao objetivo principal."
+      }
+    },
+    {
+      icone: "🗂️",
+      titulo: "Aula 11 — Kanban",
+      resumo: "Visualizando o fluxo de trabalho com Kanban.",
+      conteudo: `
+        <div class="bloco">
+          <h3>O que é Kanban?</h3>
+          <p>Kanban é uma metodologia ágil que usa um quadro visual para gerenciar o fluxo de trabalho. O nome vem do japonês e significa "cartão visual". Foi criado pela Toyota nos anos 1950 para otimizar a produção de carros.</p>
+        </div>
+        <div class="bloco">
+          <h3>Como funciona o quadro Kanban</h3>
+          <p>O quadro tem colunas que representam o estado das tarefas. O mais básico tem três colunas: <strong>A Fazer</strong>, <strong>Fazendo</strong> e <strong>Feito</strong>. Cada tarefa é um cartão que avança pelas colunas.</p>
+          <div class="destaque">👁️ O objetivo é que qualquer pessoa consiga entender o estado do projeto só de olhar para o quadro.</div>
+        </div>
+        <div class="bloco">
+          <h3>Diferença entre Kanban e Scrum</h3>
+          <p>O Scrum trabalha com sprints de tempo fixo e tem papéis definidos. O Kanban é mais flexível — não tem sprints, e as tarefas entram e saem do quadro de forma contínua. O Kanban é ideal para times que recebem demandas o tempo todo, como suporte técnico.</p>
+        </div>
+        <div class="bloco">
+          <h3>Ferramentas Kanban gratuitas</h3>
+          <p>As ferramentas mais populares para usar o Kanban online são o <strong>Trello</strong>, o <strong>Notion</strong> e o <strong>Jira</strong>. O Trello é o mais simples e indicado para quem está começando — é gratuito e muito fácil de usar.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "De onde veio o método Kanban originalmente?",
+        opcoes: [
+          "De empresas de software americanas",
+          "Do Manifesto Ágil de 2001",
+          "Da Toyota, no Japão, nos anos 1950",
+          "Do Google, para organizar projetos internos"
+        ],
+        certa: 2,
+        explicacao: "O Kanban foi criado pela Toyota no Japão nos anos 1950 para otimizar a produção industrial antes de ser adotado pela área de software."
+      }
+    },
+    {
+      icone: "🛠️",
+      titulo: "Aula 12 — Ferramentas Ágeis na Prática",
+      resumo: "Trello, Calendly e Miro no dia a dia ágil.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Trello</h3>
+          <p>O Trello é uma das ferramentas Kanban mais populares e intuitivas disponíveis online. Você cria quadros, listas e cartões para organizar qualquer tipo de projeto. É gratuito e funciona no celular e no computador.</p>
+          <div class="destaque">🔗 Acesse em: trello.com — crie uma conta gratuita e monte seu primeiro quadro.</div>
+        </div>
+        <div class="bloco">
+          <h3>Calendly</h3>
+          <p>O Calendly é uma ferramenta de agendamento online. No contexto ágil, ele pode ser usado para marcar as Daily Scrums e outras reuniões da equipe de forma automática, sem precisar trocar dezenas de mensagens para achar um horário.</p>
+          <div class="destaque">📅 Com o Calendly, você compartilha um link e a outra pessoa escolhe o horário disponível — simples assim.</div>
+        </div>
+        <div class="bloco">
+          <h3>Miro</h3>
+          <p>O Miro é uma lousa virtual colaborativa usada para criar frameworks ágeis, mapas mentais, fluxogramas e retrospectivas. Vários membros da equipe podem trabalhar no mesmo quadro ao mesmo tempo, mesmo estando em lugares diferentes.</p>
+          <div class="destaque">🎨 O Miro é muito usado para Retrospectivas de Sprint e para criar o Backlog visualmente com toda a equipe.</div>
+        </div>
+        <div class="bloco">
+          <h3>Lean</h3>
+          <p>Lean é uma filosofia de trabalho focada em eliminar desperdícios. A ideia é fazer mais com menos: menos tempo perdido, menos retrabalho, menos funcionalidades desnecessárias. O Lean influenciou diretamente o Manifesto Ágil.</p>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Para que serve o Miro no contexto de metodologias ágeis?",
+        opcoes: [
+          "Para marcar reuniões automaticamente",
+          "Para criar quadros Kanban com cartões e listas",
+          "Para criar frameworks ágeis e colaborar visualmente em tempo real",
+          "Para gerenciar o backlog do produto"
+        ],
+        certa: 2,
+        explicacao: "O Miro é uma lousa virtual colaborativa usada para criar frameworks ágeis, retrospectivas e mapas mentais com toda a equipe."
+      }
+    },
+    {
+      icone: "🏆",
+      titulo: "Aula 13 — A Importância das Metodologias Ágeis",
+      resumo: "Por que as organizações modernas adotam a agilidade.",
+      conteudo: `
+        <div class="bloco">
+          <h3>Agilidade como vantagem competitiva</h3>
+          <p>Empresas que adotam metodologias ágeis conseguem lançar produtos mais rápido, responder melhor às necessidades dos clientes e se adaptar às mudanças do mercado com mais facilidade do que concorrentes que usam modelos tradicionais.</p>
+        </div>
+        <div class="bloco">
+          <h3>Resultados comprovados</h3>
+          <p>Pesquisas mostram que projetos ágeis têm mais chances de serem concluídos no prazo e dentro do orçamento do que projetos tradicionais. Além disso, a satisfação dos clientes e das equipes tende a ser maior.</p>
+          <div class="destaque">📈 Segundo o Standish Group, projetos ágeis têm 3x mais chances de sucesso do que projetos tradicionais.</div>
+        </div>
+        <div class="bloco">
+          <h3>Agilidade além da tecnologia</h3>
+          <p>Hospitais usam metodologias ágeis para melhorar o atendimento. Escolas usam para redesenhar currículos. Startups usam para testar ideias de negócio rapidamente. A agilidade se tornou uma competência essencial para qualquer organização do século XXI.</p>
+        </div>
+        <div class="bloco">
+          <h3>O futuro é ágil</h3>
+          <p>Com o aumento da inteligência artificial, da automação e da velocidade das mudanças tecnológicas, profissionais que sabem trabalhar de forma ágil e adaptável serão cada vez mais valorizados. Aprender sobre metodologias ágeis agora é investir no seu futuro.</p>
+          <div class="destaque">🚀 Você já deu o primeiro passo completando este curso. Continue praticando!</div>
+        </div>
+      `,
+      quiz: {
+        pergunta: "Segundo pesquisas, projetos ágeis têm quantas vezes mais chance de sucesso que projetos tradicionais?",
+        opcoes: ["2 vezes", "3 vezes", "5 vezes", "10 vezes"],
+        certa: 1,
+        explicacao: "Segundo o Standish Group, projetos ágeis têm 3 vezes mais chances de sucesso do que projetos que usam metodologias tradicionais."
+      }
+    }
+  ];
+
+  // RENDERIZAR CARDS
+  const grade = document.getElementById('grade-cards');
+  aulas.forEach((aula, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="icone">${aula.icone}</div>
+      <h2>${aula.titulo}</h2>
+      <p>${aula.resumo}</p>
+    `;
+    card.onclick = () => abrirAula(i);
+    grade.appendChild(card);
+  });
+
+  let aulaAtual = 0;
+
+  function abrirAula(index) {
+    aulaAtual = index;
+    const aula = aulas[index];
+    document.getElementById('tela-modulos').style.display = 'none';
+    document.getElementById('tela-aula').style.display = 'block';
+    document.getElementById('titulo-aula').textContent = aula.titulo;
+    window.scrollTo(0, 0);
+
+    const q = aula.quiz;
+    const opcoesHTML = q.opcoes.map((op, i) =>
+      `<button onclick="responder(this, ${i}, ${q.certa})">${op}</button>`
+    ).join('');
+
+    document.getElementById('aula-conteudo').innerHTML = `
+      ${aula.conteudo}
+      <div class="bloco">
+        <h3>📝 Quiz Rápido</h3>
+        <p class="quiz-pergunta">${q.pergunta}</p>
+        <div class="quiz-opcoes" id="quiz-opcoes">${opcoesHTML}</div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+      </div>
+      <div class="nav-aulas">
+        <button class="btn-nav" onclick="abrirAula(${index - 1})" ${index === 0 ? 'disabled' : ''}>← Anterior</button>
+        <button class="btn-nav" onclick="abrirAula(${index + 1})" ${index === aulas.length - 1 ? 'disabled' : ''}>Próxima →</button>
+      </div>
+    `;
+  }
+
+  function responder(btn, escolha, certa) {
+    const botoes = document.querySelectorAll('.quiz-opcoes button');
+    botoes.forEach(b => b.disabled = true);
+    const feedback = document.getElementById('quiz-feedback');
+    if (escolha === certa) {
+      btn.classList.add('certa');
+      feedback.style.color = '#28a745';
+      feedback.textContent = '✅ Correto! ' + aulas[aulaAtual].quiz.explicacao;
+    } else {
+      btn.classList.add('errada');
+      botoes[certa].classList.add('certa');
+      feedback.style.color = '#dc3545';
+      feedback.textContent = '❌ Errado. ' + aulas[aulaAtual].quiz.explicacao;
+    }
+  }
+
+  function voltarMenu() {
+    document.getElementById('tela-modulos').style.display = 'block';
+    document.getElementById('tela-aula').style.display = 'none';
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
